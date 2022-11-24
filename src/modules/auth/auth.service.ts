@@ -29,11 +29,15 @@ export class AuthService {
   }
 
   public async login(user) {
-    console.log('login', user);
+    const currentUser = await this.userService.findOneByEmail(user.email);
 
-    const token = await this.generateToken(user);
+    const checkPass = bcrypt.compareSync(user.password, currentUser?.password);
 
-    return { user, token };
+    if (!currentUser || !checkPass) throw new Error(`User doesn't found `);
+
+    delete user.password;
+
+    return { token: await this.generateToken(user) };
   }
 
   public async create(user) {
