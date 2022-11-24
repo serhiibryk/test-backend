@@ -29,10 +29,7 @@ export class AuthService {
   }
 
   public async login(user) {
-    console.log('login', user);
-
     const token = await this.generateToken(user);
-
     return { user, token };
   }
 
@@ -55,14 +52,11 @@ export class AuthService {
 
   private async generateToken(user) {
     const token = await this.jwtService.signAsync(user);
-    console.log(token);
-
     return token;
   }
 
   private async hashPassword(password) {
     const hash = await bcrypt.hash(password, 10);
-
     return hash;
   }
 
