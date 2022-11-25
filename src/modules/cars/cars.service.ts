@@ -11,14 +11,22 @@ export class CarsService {
   ) {}
 
   async create(cars: CarsDto): Promise<Cars> {
-    return await this.carsRepository.create<Cars>(cars);
+    return this.carsRepository.create<Cars>(cars);
   }
 
   async findOneByName(vehicleName: string): Promise<Cars> {
-    return await this.carsRepository.findOne<Cars>({ where: { vehicleName } });
+    return this.carsRepository.findOne<Cars>({ where: { vehicleName } });
   }
 
   async findOneById(id: number): Promise<Cars> {
-    return await this.carsRepository.findOne<Cars>({ where: { id } });
+    return this.carsRepository.findOne<Cars>({ where: { id } });
+  }
+
+  async removeOneById(id: string): Promise<number> {
+    return this.carsRepository.destroy({
+      where: {
+        id,
+      },
+    });
   }
 }
