@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
@@ -41,19 +41,20 @@ export class AuthService {
   }
 
   public async create(user) {
-    // hash the password
+    const userExist = await this.userService.findOneByEmail(user.email);
+
+    if (userExist) {
+      throw new ForbiddenException('This email already exist');
+    }
+
     const pass = await this.hashPassword(user.password);
 
-    // create the user
     const newUser = await this.userService.create({ ...user, password: pass });
 
-    // tslint:disable-next-line: no-string-literal
     const { password, ...result } = newUser['dataValues'];
 
-    // generate token
     const token = await this.generateToken(result);
 
-    // return the user and the token
     return { user: result, token };
   }
 
